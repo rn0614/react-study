@@ -52,16 +52,49 @@ function Article(props) {
     </article>
   );
 }
+function Create(props) {
+  return (
+    <article>
+      <h2>Create</h2>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          const title = event.target.title.value;
+          const body = event.target.body.value;
+          props.onCreate(title, body);
+        }}
+      >
+        <p>
+          <input type="text" name="title" placeholder="title" />
+        </p>
+        <p>
+          <textarea
+            name="body"
+            id=""
+            cols="30"
+            rows="10"
+            placeholder="content"
+          />
+        </p>
+        <p>
+          <input type="submit" value="create" />
+        </p>
+      </form>
+    </article>
+  );
+}
 // 초기 실행 한번시 실행되는 문장
 export default function App() {
   const [mode, setMode] = useState('WELCOME');
   const [id, setId] = useState(null);
-  const topics = [
+  const [nextId, setNextId] = useState(4);
+  const [topics, setTopics] = useState([
     { id: 1, title: 'html', body: 'content1' },
     { id: 2, title: 'css', body: 'content2' },
     { id: 3, title: 'javascript', body: 'content3' },
-  ];
+  ]);
   let content = null;
+  let contextControl = null;
   if (mode === 'WELCOME') {
     content = <Article title="Welcome" body="Hello, WEB"></Article>;
   } else if (mode === 'READ') {
@@ -74,6 +107,33 @@ export default function App() {
       }
     }
     content = <Article title={title} body={body}></Article>;
+    contextControl = (
+      <li>
+        <a
+          href="/update"
+          onClick={(event) => {
+            event.preventDefault();
+            setMode('UPDATE');
+          }}
+        >
+          update
+        </a>
+      </li>
+    );
+  } else if (mode === 'CREATE') {
+    content = (
+      <Create
+        onCreate={(title, body) => {
+          const newTopic = { id: nextId, title, body };
+          const newTipics = [...topics];
+          newTipics.push(newTopic);
+          setTopics(newTipics);
+          setMode('READ');
+          setId(nextId);
+          setNextId(nextId + 1);
+        }}
+      ></Create>
+    );
   }
   return (
     <div>
@@ -93,6 +153,20 @@ export default function App() {
         }}
       ></Nav>
       {content}
+      <ul>
+        <li>
+          <a
+            href="/create"
+            onClick={(event) => {
+              event.preventDefault();
+              setMode('CREATE');
+            }}
+          >
+            create
+          </a>
+        </li>
+        {contextControl}
+      </ul>
     </div>
   );
 }
