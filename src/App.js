@@ -174,7 +174,7 @@ export default function App() {
                 }
               }
               setTopics(newTopics);
-              setMode("WELCOME");
+              setMode('WELCOME');
             }}
           />
         </li>
